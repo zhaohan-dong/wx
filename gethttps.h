@@ -5,12 +5,6 @@
 
 #include<curl/curl.h>
 
-char *curl_output(char *ptr) {
-  printf("%d", ptr);
-  return ptr;
-}
-
-
 int get_https_response(char *url) {
   CURL *curl;
   CURLcode res;
@@ -20,7 +14,7 @@ int get_https_response(char *url) {
   curl = curl_easy_init();
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_output);
+    //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_output);
  
 #ifdef SKIP_PEER_VERIFICATION
     /*
