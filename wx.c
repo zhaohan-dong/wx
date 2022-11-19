@@ -43,6 +43,8 @@ int main(int argc, char **argv) {
             ++i;
         }
     }
+
+    
     for (i = 0; i < station_idsc; ++i) {
         printf("%s\n", station_ids[i]);
     }
