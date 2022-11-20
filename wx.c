@@ -41,12 +41,12 @@ int main(int argc, char **argv) {
     report_types_len=0;
 
     // While remaining argc is greater than 1 (in case -r flag not given) and haven't read -r flag, assign argv[++i] to station list
-    while (--argc > 1 && (strcmp((stations[stations_len++] = argv[++i]), "-r") != 0))
+    while (argc-- > 1 && (strcmp((stations[stations_len++] = argv[++i]), "-r") != 0))
     ;
 
     // If last item in stations list is not -r (-r not given), use default reports METAR and TAF
-    if (strcmp(stations[--stations_len], "-r") != 0) {
-        ++stations_len; // Add 1 back to station length that was deducted from comparison
+    if (strcmp(stations[stations_len-1], "-r") != 0) {
+        //++stations_len; // Add 1 back to station length that was deducted from comparison
 
         // Assign default report types
         report_types[0] = "METAR";
