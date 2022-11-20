@@ -3,7 +3,23 @@
  * Using example from official curl example: https://curl.se/libcurl/c/https.html and curl.h
 */
 
-#include "gethttps.h"
+#include "query.h"
+
+void queryurl(char *url, char *station, char *report_type) {
+
+  // Temp fix for lowercase METAR and TAF (API only takes lowercase)
+  if (strcmp(report_type, "METAR") == 0) {
+            report_type = "metar";
+        } else if (strcmp(report_type, "TAF") == 0) {
+            report_type = "taf";
+        }
+
+  strcpy(url, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=");
+  strcat(url, report_type);
+  strcat(url, "s&requestType=retrieve&format=csv&stationString=");
+  strcat(url, station);
+  strcat(url, "&hoursBeforeNow=6.25");
+}
 
 int gethttps(char *url) {
   CURL *curl;

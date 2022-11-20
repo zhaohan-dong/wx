@@ -6,17 +6,16 @@
 // use -lcurl to link curl library when compiling
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include "gethttps.h"
+#include "query.h"
 
 #define MAXSTATION 1024
 #define REPORTNUM 2
+#define MAXQUERYLENGTH 1024
 
 
 int main(int argc, char **argv) {
-    char *stations[MAXSTATION], *report_types[REPORTNUM];
+    char *stations[MAXSTATION], *report_types[REPORTNUM], *report_types_query[REPORTNUM];
     int stations_len=0, report_types_len=0;
     int i=1;
 
@@ -62,13 +61,23 @@ int main(int argc, char **argv) {
          }
     }
 
-    int j;
-    for (j=0; j<stations_len; j++)
-    printf("%s\n", stations[j]);
-    for (j=0; j<report_types_len; j++)
-    printf("%s\n", report_types[j]);
 
-    //gethttps("https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2");
+
+    // Retrieve data and print
+    int j,k;
+
+    for (j=0; j<stations_len; j++) {
+        for (k=0; k<report_types_len; k++) {
+            // Create memory in heap for URL string
+            char *url = malloc(MAXQUERYLENGTH);
+            // Complete the URL string in the heap
+            queryurl(url, stations[j], report_types[k]);
+            // Do something with the URL
+            gethttps(url);
+            // Free memory for URL string
+            free(url);
+        }
+    }
 
     return 0;
 }
