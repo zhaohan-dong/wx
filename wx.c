@@ -1,3 +1,10 @@
+/* Retrieve aviation weather reports using "wx.sh StationID ReportType"
+    Created by Zhaohan Dong on 2022/10/23
+    Station_ID is the airport ICAO code
+    Reports is report type
+*/
+// use -lcurl to link curl library when compiling
+
 #include <stdio.h>
 #include <string.h>
 #include "gethttps.h"
@@ -8,7 +15,13 @@
 int main(int argc, char **argv) {
     char *stations[MAXSTATION], *report_types[REPORTNUM];
     int stations_len=0, report_types_len=0;
-    int i=1, j=0, k=0;
+    int i=0;
+
+    // Return error if no argument is parsed
+    if (argc < 2) {
+        printf("Usage: wx {station names} [-r] report types\n");
+        return -1;
+    }
 
     // Print usage help
     if (strcmp(argv[i], "-h") == 0) {
@@ -42,13 +55,18 @@ int main(int argc, char **argv) {
     }
     // Else read report types
     else {
-         while (--argc > 1 && k < REPORTNUM) {
-            report_types[k++] = argv[++i]; // Use ++i because argv[i] is now at the -r flag
-            ++report_types_len;
+         while (argc-- > 1 && report_types_len < REPORTNUM) {
+            report_types[report_types_len++] = argv[++i]; // Use ++i because argv[i] is now at the -r flag
          }
     }
 
-    printf("%s\n", gethttps("https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2"));
+    int j;
+    for (j=0; j<stations_len; j++)
+    printf("%s\n", stations[j]);
+    for (j=0; j<report_types_len; j++)
+    printf("%s\n", report_types[j]);
+
+    gethttps("https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2");
 
     return 0;
 }

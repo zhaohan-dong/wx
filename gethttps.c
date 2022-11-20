@@ -4,7 +4,6 @@
 */
 
 #include "gethttps.h"
-#include<curl/curl.h>
 
 int gethttps(char *url) {
   CURL *curl;
