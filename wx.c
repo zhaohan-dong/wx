@@ -15,7 +15,7 @@
 int main(int argc, char **argv) {
     char *stations[MAXSTATION], *report_types[REPORTNUM];
     int stations_len=0, report_types_len=0;
-    int i=0;
+    int i=1;
 
     // Return error if no argument is parsed
     if (argc < 2) {
@@ -40,8 +40,8 @@ int main(int argc, char **argv) {
     stations_len=0;
     report_types_len=0;
 
-    // While remaining argc is greater than 1 (in case -r flag not given) and haven't read -r flag, assign argv[++i] to station list
-    while (argc-- > 1 && (strcmp((stations[stations_len++] = argv[++i]), "-r") != 0))
+    // While remaining argc is greater than 1 (in case -r flag not given) and haven't read -r flag, assign argv[i++] to station list
+    while (argc-- > 1 && (strcmp((stations[stations_len++] = argv[i++]), "-r") != 0))
     ;
 
     // If last item in stations list is not -r (-r not given), use default reports METAR and TAF
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     else {
         --stations_len; // Subtract 1 from stations_len to exclude -r from length
          while (argc-- > 1 && report_types_len < REPORTNUM) {
-            report_types[report_types_len++] = argv[++i]; // Use ++i because argv[i] is now at the -r flag
+            report_types[report_types_len++] = argv[i++]; // Use i++ because argv[i] is now at the first report type
          }
     }
 
