@@ -3,9 +3,10 @@
  * Using example from official curl example: https://curl.se/libcurl/c/https.html and curl.h
 */
 
+#include "gethttps.h"
 #include<curl/curl.h>
 
-int get_https_response(char *url) {
+int gethttps(char *url) {
   CURL *curl;
   CURLcode res;
  

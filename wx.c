@@ -1,87 +1,54 @@
-/* Retrieve aviation weather reports using "wx.sh StationID ReportType"
-    Created by Zhaohan Dong on 2022/10/23
-    Station_ID is the airport ICAO code
-    Reports is report type
-*/
-
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include "gethttps.h"
 
-void parse_report(char *station_id, char *report_type, float query_hours_before);
-char *filter_csv(char *res, int row);
-
+#define MAXSTATION 1024
+#define REPORTNUM 2
 
 int main(int argc, char **argv) {
-    int i, j;
-    char res[2048], station_ids[16][5], report_types[4][6];
-    int station_idsc, report_typesc;
+    char *stations[MAXSTATION], *report_types[REPORTNUM];
+    int stations_len=0, report_types_len=0;
+    int i=1, j=0, k=0;
 
-    // Handle input flags and return station_ids and report_types
-    i = 1;
-    while (i < argc) {
-
-        // If argument is flag is -s, then we parse station ids
-        if (strcmp(argv[i], "-s") == 0) {
-            ++i;
-            for (j = 0; argv[i] && (argv[i][0] != '-'); ++j) {
-                strcpy(station_ids[j], argv[i++]);
-                station_idsc = j + 1;
-            }
-        } else if (strcmp(argv[i], "-r") == 0) {
-
-            // Else if argument is flag -r, we parse report types
-            ++i;
-            for (j = 0; argv[i] && (argv[i][0] != '-'); ++j) {
-                strcpy(report_types[j], argv[i++]);
-                report_typesc = j + 1;
-            }
-        } else {
-            
-            // Else advance to next argument
-            ++i;
-        }
+    // Print usage help
+    if (strcmp(argv[i], "-h") == 0) {
+        printf("Usage: wx {station names} [-r] report types\n");
+        return 0;
     }
 
-    
-    for (i = 0; i < station_idsc; ++i) {
-        printf("%s\n", station_ids[i]);
+    // Check against inputing -r first
+    if (strcmp(argv[i], "-r") == 0) {
+        printf("Please enter station identifier first before report type\n");
+        printf("For usage, use -h\n");
+        return -1;
     }
-    for (i = 0; i < report_typesc; ++i) {
-        printf("%s\n", report_types[i]);
+
+    // Initialize length counts if arguments passed the checks before
+    stations_len=0;
+    report_types_len=0;
+
+    // While remaining argc is greater than 1 (in case -r flag not given) and haven't read -r flag, assign argv[++i] to station list
+    while (--argc > 1 && (strcmp((stations[stations_len++] = argv[++i]), "-r") != 0))
+    ;
+
+    // If last item in stations list is not -r (-r not given), use default reports METAR and TAF
+    if (strcmp(stations[--stations_len], "-r") != 0) {
+        ++stations_len; // Add 1 back to station length that was deducted from comparison
+
+        // Assign default report types
+        report_types[0] = "METAR";
+        report_types[1] = "TAF";
+        report_types_len = 2;
     }
-            //parse_report(argv[i], "METAR", 4);
-        //printf("%s\n", argv[i]);
+    // Else read report types
+    else {
+         while (--argc > 1 && k < REPORTNUM) {
+            report_types[k++] = argv[++i]; // Use ++i because argv[i] is now at the -r flag
+            ++report_types_len;
+         }
+    }
+
+    printf("%s\n", gethttps("https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2"));
+
     return 0;
 }
-
-/* Parse station_id (airport id) and report_type (metar/taf) to url string
- * then use get_https_response to 
- */
-void parse_report(char *station_id, char *report_type, float query_hours_before) {
-    char *response, *report;
-    char url[150];
-    snprintf(url, sizeof(url), "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=%2.2f", report_type, station_id, query_hours_before);
-    printf("%d\n", get_https_response(url));
-    //filter_csv(response, 7);
-    //return report;
-}
-
-/*
-char *filter_csv(char *res, int row) {
-    // i is nth char in res, j is nth char in ret_str, r is row counter
-    int i, j, r;
-    char *token;
-    const char s[2] = ",";
-    
-    token = strtok(res, s);
-   
-   // walk through other tokens
-   while( token != NULL ) {
-      printf( " %s\n\n", token );
-      printf("Hello!\n");
-      token = strtok(NULL, s);
-   }
-    return token;
-}*/
