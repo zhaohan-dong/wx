@@ -6,11 +6,14 @@
 // use -lcurl to link curl library when compiling
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "gethttps.h"
 
 #define MAXSTATION 1024
 #define REPORTNUM 2
+
 
 int main(int argc, char **argv) {
     char *stations[MAXSTATION], *report_types[REPORTNUM];
@@ -41,7 +44,7 @@ int main(int argc, char **argv) {
     report_types_len=0;
 
     // While remaining argc is greater than 1 (in case -r flag not given) and haven't read -r flag, assign argv[i++] to station list
-    while (argc-- > 1 && (strcmp((stations[stations_len++] = argv[i++]), "-r") != 0))
+    while (argc-- > 1 && (strcmp(stations[stations_len++] = argv[i++], "-r") != 0))
     ;
 
     // If last item in stations list is not -r (-r not given), use default reports METAR and TAF
@@ -65,7 +68,7 @@ int main(int argc, char **argv) {
     for (j=0; j<report_types_len; j++)
     printf("%s\n", report_types[j]);
 
-    gethttps("https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2");
+    //gethttps("https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2");
 
     return 0;
 }
