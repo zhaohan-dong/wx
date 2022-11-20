@@ -70,11 +70,13 @@ int main(int argc, char **argv) {
         for (k=0; k<report_types_len; k++) {
             // Create memory in heap for URL string
             char *url = malloc(MAXQUERYLENGTH);
+            struct report rpt;
             // Complete the URL string in the heap
             queryurl(url, stations[j], report_types[k]);
             // Do something with the URL
-            gethttps(url);
-            // Free memory for URL string
+            gethttps(url, rpt);         // segmentation fault here
+            //printf("%s\n", rpt.response);
+            // Free memory in heap for URL string
             free(url);
         }
     }

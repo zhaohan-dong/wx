@@ -21,16 +21,17 @@ void queryurl(char *url, char *station, char *report_type) {
   strcat(url, "&hoursBeforeNow=6.25");
 }
 
-int gethttps(char *url) {
+int gethttps(char *url, struct report rpt) {
   CURL *curl;
   CURLcode res;
  
-  //curl_global_init(CURL_GLOBAL_DEFAULT);
+  curl_global_init(CURL_GLOBAL_DEFAULT);
  
   curl = curl_easy_init();
+
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    //curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_output);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&rpt);
  
 #ifdef SKIP_PEER_VERIFICATION
     /*
