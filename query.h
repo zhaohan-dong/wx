@@ -1,6 +1,7 @@
 #include <curl/curl.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAXQUERYLENGTH 1024
 

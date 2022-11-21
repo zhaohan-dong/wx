@@ -23,22 +23,31 @@ void queryurl(char *url, char *station, char *report_type, float hours_before_no
 void print_report(char **stations, int stations_len, char **report_types, int report_types_len) {
   // Index for stations and report types
   int i, j;
+  time_t tmi;
+  struct tm* utcTime;
+  
+  time(&tmi);
+  utcTime = gmtime(&tmi);
+
+  // Print start separator and current UTC time
+  printf("---START---\n%2d/%2d/%2d %2d:%2d:%2d\n", utcTime->tm_year % 100, utcTime->tm_mon, utcTime->tm_mday, utcTime->tm_hour, utcTime->tm_min, utcTime->tm_sec);
+
+  // Initialize report struct to receive data
+  struct ReportStruct report;
 
   for (i=0; i<stations_len; i++) {
         for (j=0; j<report_types_len; j++) {
 
             // Create memory in heap for URL string
             char *url = calloc(1, MAXQUERYLENGTH);
-
-            struct ReportStruct report;
+            
             // Create a new struct called report defined in query.h to get curl result
             report.reportstr = calloc(4, 8192);
             report.size = 0;
 
             // Complete the URL string in the heap
             queryurl(url, stations[i], report_types[j], 6.5);
-            // Debug: print query URL to check
-            // printf("%s\n", url);
+
             // Get report from url
             gethttps(url, report);
 
@@ -46,12 +55,18 @@ void print_report(char **stations, int stations_len, char **report_types, int re
             free(url);
             url = NULL;
 
+            // Print header for each report
+            printf("\n%s %s\n", stations[i], report_types[j]);
+            // Print out the report for this station and report type
             printf("%s\n", filter_csv(report.reportstr, 7, 1));
+
             // Free memory in heap for URL string
             free(report.reportstr);
-
         }
-    }
+  }
+
+  // Print end separator
+  printf("\n----END----\n");
 }
 
 // Select specific cell from csv
