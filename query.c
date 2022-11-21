@@ -63,6 +63,7 @@ void print_report(char **stations, int stations_len, char **report_types, int re
 
             // Free memory in heap for URL string
             free(report.reportstr);
+            report.reportstr = NULL;
         }
   }
 
