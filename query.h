@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define MAXQUERYLENGTH 1024
+
 struct report {
    char *response;
    size_t size;

@@ -13,12 +13,8 @@ void queryurl(char *url, char *station, char *report_type) {
         } else if (strcmp(report_type, "TAF") == 0) {
             report_type = "taf";
         }
-
-  strcpy(url, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=");
-  strcat(url, report_type);
-  strcat(url, "s&requestType=retrieve&format=csv&stationString=");
-  strcat(url, station);
-  strcat(url, "&hoursBeforeNow=6.25");
+  
+  snprintf(url, MAXQUERYLENGTH, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=6.25", report_type, station);
 }
 
 int gethttps(char *url, struct report rpt) {

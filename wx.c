@@ -11,8 +11,6 @@
 
 #define MAXSTATION 1024
 #define REPORTNUM 2
-#define MAXQUERYLENGTH 1024
-
 
 int main(int argc, char **argv) {
     char *stations[MAXSTATION], *report_types[REPORTNUM], *report_types_query[REPORTNUM];
@@ -70,11 +68,12 @@ int main(int argc, char **argv) {
         for (k=0; k<report_types_len; k++) {
             // Create memory in heap for URL string
             char *url = malloc(MAXQUERYLENGTH);
-            struct report rpt;
+            //struct report rpt;
             // Complete the URL string in the heap
             queryurl(url, stations[j], report_types[k]);
             // Do something with the URL
-            gethttps(url, rpt);         // segmentation fault here
+            printf("%s\n", url);
+            //gethttps(url, rpt);         // segmentation fault here
             //printf("%s\n", rpt.response);
             // Free memory in heap for URL string
             free(url);
@@ -83,3 +82,33 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
+/* Parse station_id (airport id) and report_type (metar/taf) to url string
+ * then use get_https_response to 
+ */
+void parse_report(char *station_id, char *report_type, float query_hours_before) {
+    char *response, *report;
+    char url[150];
+    snprintf(url, sizeof(url), "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=%2.2f", report_type, station_id, query_hours_before);
+    //printf("%d\n", get_https_response(url));
+    //filter_csv(response, 7);
+    //return report;
+}
+
+/*
+char *filter_csv(char *res, int row) {
+    // i is nth char in res, j is nth char in ret_str, r is row counter
+    int i, j, r;
+    char *token;
+    const char s[2] = ",";
+    
+    token = strtok(res, s);
+   
+   // walk through other tokens
+   while( token != NULL ) {
+      printf( " %s\n\n", token );
+      printf("Hello!\n");
+      token = strtok(NULL, s);
+   }
+    return token;
+}*/
