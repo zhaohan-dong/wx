@@ -63,25 +63,26 @@ int main(int argc, char **argv) {
 
     // Retrieve data and print
     int j,k;
-    struct ReportStruct report;
+    
 
     for (j=0; j<stations_len; j++) {
         for (k=0; k<report_types_len; k++) {
 
             // Create memory in heap for URL string
-            char *url = malloc(MAXQUERYLENGTH);
+            char *url = calloc(1, MAXQUERYLENGTH);
 
+            struct ReportStruct report;
             // Create a new struct called report defined in query.h to get curl result
-            report.reportstr = malloc(4096);
+            report.reportstr = calloc(4, 8192);
             report.size = 0;
 
             // Complete the URL string in the heap
             queryurl(url, stations[j], report_types[k]);
             // Debug: print query URL to check
-            printf("%s\n", url);
-            
+            // printf("%s\n", url);
             // Get report from url
             gethttps(url, report);
+
             // Free URL from memory since it has been used
             free(url);
             url = NULL;
@@ -89,7 +90,7 @@ int main(int argc, char **argv) {
             printf("%s\n", report.reportstr);
             // Free memory in heap for URL string
             free(report.reportstr);
-            report.reportstr = NULL;
+
         }
     }
 

@@ -5,6 +5,7 @@
 
 #include "query.h"
 
+// Function to get query URL
 void queryurl(char *url, char *station, char *report_type) {
 
   // Temp fix for lowercase METAR and TAF (API only takes lowercase)
@@ -17,6 +18,7 @@ void queryurl(char *url, char *station, char *report_type) {
   snprintf(url, MAXQUERYLENGTH, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=6.25", report_type, station);
 }
 
+// Callback function for curl https request, wrapped in gethttps
 int WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
   size_t realsize = size * nmemb;
@@ -33,11 +35,11 @@ int WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
   memcpy(&(mem->reportstr[mem->size]), contents, realsize);
   mem->size += realsize;
   mem->reportstr[mem->size] = 0;
- 
+
   return realsize;
 }
 
-
+// Curl get https
 int gethttps(char *url, struct ReportStruct report) {
   CURL *curl;
   CURLcode res;
