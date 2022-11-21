@@ -4,11 +4,11 @@
 
 #define MAXQUERYLENGTH 1024
 
-struct report {
-   char *response;
-   size_t size;
- };
+struct ReportStruct {
+  char *reportstr;
+  size_t size;
+};
 
 void queryurl(char *url, char *station, char *report_type);
-int gethttps(char *url, struct report rpt);
-int writeresponse(char *url, char *report_str);
+int WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp);
+int gethttps(char *url, struct ReportStruct report);

@@ -1,6 +1,6 @@
 /* Get https response in csv file format from aviationweather.gov
  * Example URL: https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=metars&requestType=retrieve&format=csv&stationString=KDEN&hoursBeforeNow=2
- * Using example from official curl example: https://curl.se/libcurl/c/https.html and curl.h
+ * Using example from official curl example: https://curl.se/libcurl/c/getinmemory.html and curl.h
 */
 
 #include "query.h"
@@ -17,7 +17,28 @@ void queryurl(char *url, char *station, char *report_type) {
   snprintf(url, MAXQUERYLENGTH, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=6.25", report_type, station);
 }
 
-int gethttps(char *url, struct report rpt) {
+int WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+  size_t realsize = size * nmemb;
+  struct ReportStruct *mem = (struct ReportStruct *)userp;
+ 
+  char *ptr = realloc(mem->reportstr, mem->size + realsize + 1);
+  if(!ptr) {
+    /* out of memory! */
+    printf("not enough memory (realloc returned NULL)\n");
+    return 0;
+  }
+ 
+  mem->reportstr = ptr;
+  memcpy(&(mem->reportstr[mem->size]), contents, realsize);
+  mem->size += realsize;
+  mem->reportstr[mem->size] = 0;
+ 
+  return realsize;
+}
+
+
+int gethttps(char *url, struct ReportStruct report) {
   CURL *curl;
   CURLcode res;
  
@@ -27,7 +48,11 @@ int gethttps(char *url, struct report rpt) {
 
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&rpt);
+    /* send all data to this function  */
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+ 
+    /* we pass our 'chunk' struct to the callback function */
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&report);
  
 #ifdef SKIP_PEER_VERIFICATION
     /*

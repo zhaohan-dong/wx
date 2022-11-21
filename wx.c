@@ -63,20 +63,33 @@ int main(int argc, char **argv) {
 
     // Retrieve data and print
     int j,k;
+    struct ReportStruct report;
 
     for (j=0; j<stations_len; j++) {
         for (k=0; k<report_types_len; k++) {
+
             // Create memory in heap for URL string
             char *url = malloc(MAXQUERYLENGTH);
-            //struct report rpt;
+
+            // Create a new struct called report defined in query.h to get curl result
+            report.reportstr = malloc(4096);
+            report.size = 0;
+
             // Complete the URL string in the heap
             queryurl(url, stations[j], report_types[k]);
-            // Do something with the URL
+            // Debug: print query URL to check
             printf("%s\n", url);
-            //gethttps(url, rpt);         // segmentation fault here
-            //printf("%s\n", rpt.response);
-            // Free memory in heap for URL string
+            
+            // Get report from url
+            gethttps(url, report);
+            // Free URL from memory since it has been used
             free(url);
+            url = NULL;
+
+            printf("%s\n", report.reportstr);
+            // Free memory in heap for URL string
+            free(report.reportstr);
+            report.reportstr = NULL;
         }
     }
 
