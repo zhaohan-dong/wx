@@ -59,54 +59,8 @@ int main(int argc, char **argv) {
          }
     }
 
-
-
-    // Retrieve data and print
-    int j,k;
-    
-
-    for (j=0; j<stations_len; j++) {
-        for (k=0; k<report_types_len; k++) {
-
-            // Create memory in heap for URL string
-            char *url = calloc(1, MAXQUERYLENGTH);
-
-            struct ReportStruct report;
-            // Create a new struct called report defined in query.h to get curl result
-            report.reportstr = calloc(4, 8192);
-            report.size = 0;
-
-            // Complete the URL string in the heap
-            queryurl(url, stations[j], report_types[k]);
-            // Debug: print query URL to check
-            // printf("%s\n", url);
-            // Get report from url
-            gethttps(url, report);
-
-            // Free URL from memory since it has been used
-            free(url);
-            url = NULL;
-
-            printf("%s\n", report.reportstr);
-            // Free memory in heap for URL string
-            free(report.reportstr);
-
-        }
-    }
-
+    print_report(stations, stations_len, report_types, report_types_len);
     return 0;
-}
-
-/* Parse station_id (airport id) and report_type (metar/taf) to url string
- * then use get_https_response to 
- */
-void parse_report(char *station_id, char *report_type, float query_hours_before) {
-    char *response, *report;
-    char url[150];
-    snprintf(url, sizeof(url), "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=%2.2f", report_type, station_id, query_hours_before);
-    //printf("%d\n", get_https_response(url));
-    //filter_csv(response, 7);
-    //return report;
 }
 
 /*
