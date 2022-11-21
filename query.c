@@ -43,7 +43,7 @@ void print_report(char **stations, int stations_len, char **report_types, int re
             char *url = calloc(1, MAXQUERYLENGTH);
             
             // Create a new struct called report defined in query.h to get curl result
-            report.reportstr = calloc(4, 8192);
+            report.reportstr = calloc(1, 32768);
             report.size = 0;
 
             // Complete the URL string in the heap
