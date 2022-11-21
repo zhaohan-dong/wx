@@ -30,12 +30,13 @@ void print_report(char **stations, int stations_len, char **report_types, int re
   utcTime = gmtime(&tmi);
 
   // Print start separator and current UTC time
-  printf("---START---\n%2d/%2d/%2d %2d:%2d:%2d\n", utcTime->tm_year % 100, utcTime->tm_mon, utcTime->tm_mday, utcTime->tm_hour, utcTime->tm_min, utcTime->tm_sec);
+  printf("---START---\n%02d/%02d/%02d %02d:%02d:%02d\n", (utcTime->tm_year % 100), utcTime->tm_mon, utcTime->tm_mday, utcTime->tm_hour, utcTime->tm_min, utcTime->tm_sec);
 
   // Initialize report struct to receive data
   struct ReportStruct report;
 
   for (i=0; i<stations_len; i++) {
+    printf("\n");
         for (j=0; j<report_types_len; j++) {
 
             // Create memory in heap for URL string
@@ -56,7 +57,7 @@ void print_report(char **stations, int stations_len, char **report_types, int re
             url = NULL;
 
             // Print header for each report
-            printf("\n%s %s\n", stations[i], report_types[j]);
+            printf("%s %s\n", stations[i], report_types[j]);
             // Print out the report for this station and report type
             printf("%s\n", filter_csv(report.reportstr, 7, 1));
 
