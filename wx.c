@@ -62,21 +62,3 @@ int main(int argc, char **argv) {
     print_report(stations, stations_len, report_types, report_types_len);
     return 0;
 }
-
-/*
-char *filter_csv(char *res, int row) {
-    // i is nth char in res, j is nth char in ret_str, r is row counter
-    int i, j, r;
-    char *token;
-    const char s[2] = ",";
-    
-    token = strtok(res, s);
-   
-   // walk through other tokens
-   while( token != NULL ) {
-      printf( " %s\n\n", token );
-      printf("Hello!\n");
-      token = strtok(NULL, s);
-   }
-    return token;
-}*/

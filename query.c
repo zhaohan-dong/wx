@@ -15,18 +15,17 @@ void queryurl(char *url, char *station, char *report_type, float hours_before_no
             report_type = "taf";
         }
   
+  // Concatenate the URL
   snprintf(url, MAXQUERYLENGTH, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=%2.2f", report_type, station, hours_before_now);
 }
 
 // Fuction to print report
 void print_report(char **stations, int stations_len, char **report_types, int report_types_len) {
-    //printf("%d\n", get_https_response(url));
-    //filter_csv(response, 7);
-    //return report;
-    int j,k;
+  // Index for stations and report types
+  int i, j;
 
-    for (j=0; j<stations_len; j++) {
-        for (k=0; k<report_types_len; k++) {
+  for (i=0; i<stations_len; i++) {
+        for (j=0; j<report_types_len; j++) {
 
             // Create memory in heap for URL string
             char *url = calloc(1, MAXQUERYLENGTH);
@@ -37,7 +36,7 @@ void print_report(char **stations, int stations_len, char **report_types, int re
             report.size = 0;
 
             // Complete the URL string in the heap
-            queryurl(url, stations[j], report_types[k], 6.5);
+            queryurl(url, stations[i], report_types[j], 6.5);
             // Debug: print query URL to check
             // printf("%s\n", url);
             // Get report from url
@@ -47,12 +46,34 @@ void print_report(char **stations, int stations_len, char **report_types, int re
             free(url);
             url = NULL;
 
-            printf("%s\n", report.reportstr);
+            printf("%s\n", filter_csv(report.reportstr, 7, 1));
             // Free memory in heap for URL string
             free(report.reportstr);
 
         }
     }
+}
+
+// Select specific cell from csv
+char *filter_csv(char *csv_string, int row, int col) {
+  // r is row counter, c is column counter
+  int r=0, c=0;
+  char *token_row;
+  char *token;
+  
+  // Walk through other rows till target row
+  token_row = strtok(csv_string, "\n");
+  while(token_row != NULL && ++r < row) {
+    token_row = strtok(NULL, "\n");
+  }
+
+  // In the target row, walk through other columns till target cell
+  token = strtok(token_row, ",");
+  while(token != NULL && ++c < col) {
+    token = strtok(NULL, ",");
+  }
+
+  return token;
 }
 
 // Callback function for curl https request, wrapped in gethttps
