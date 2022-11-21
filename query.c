@@ -6,7 +6,7 @@
 #include "query.h"
 
 // Function to get query URL
-void queryurl(char *url, char *station, char *report_type) {
+void queryurl(char *url, char *station, char *report_type, float hours_before_now) {
 
   // Temp fix for lowercase METAR and TAF (API only takes lowercase)
   if (strcmp(report_type, "METAR") == 0) {
@@ -15,7 +15,7 @@ void queryurl(char *url, char *station, char *report_type) {
             report_type = "taf";
         }
   
-  snprintf(url, MAXQUERYLENGTH, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=6.25", report_type, station);
+  snprintf(url, MAXQUERYLENGTH, "https://aviationweather.gov/adds/dataserver_current/httpparam?dataSource=%ss&requestType=retrieve&format=csv&stationString=%s&hoursBeforeNow=%2.2f", report_type, station, hours_before_now);
 }
 
 // Fuction to print report
@@ -37,7 +37,7 @@ void print_report(char **stations, int stations_len, char **report_types, int re
             report.size = 0;
 
             // Complete the URL string in the heap
-            queryurl(url, stations[j], report_types[k]);
+            queryurl(url, stations[j], report_types[k], 6.5);
             // Debug: print query URL to check
             // printf("%s\n", url);
             // Get report from url
