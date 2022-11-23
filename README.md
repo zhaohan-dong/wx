@@ -9,3 +9,5 @@ https://en.wikipedia.org/wiki/METAR<br />
 https://en.wikipedia.org/wiki/Terminal_aerodrome_forecast<br />
 
 The data is fetched using API from https://aviationweather.gov
+
+The executable `wx` is compiled for MacOS aarch64 using GCC 12. The shell script `wx.sh` is also provided.
